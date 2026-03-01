@@ -19,8 +19,26 @@ ORANGE = (255, 140, 0)      # Cat
 
 # Game entity settings
 PLAYER_SPEED = 5
-ENEMY_SPEED = 2
 PLAYER_SIZE = 32
+
+# Difficulty Configurations
+DIFFICULTIES = {
+    "EASY": {
+        "ENEMY_SPEED": 2,
+        "PUDDLE_COUNT": 3,
+        "DOG_COUNT": 2
+    },
+    "MEDIUM": {
+        "ENEMY_SPEED": 4,
+        "PUDDLE_COUNT": 5,
+        "DOG_COUNT": 4
+    },
+    "HARD": {
+        "ENEMY_SPEED": 6,
+        "PUDDLE_COUNT": 8,
+        "DOG_COUNT": 6
+    }
+}
 ENEMY_SIZE = 40
 ITEM_SIZE = 20
 PUDDLE_SIZE = 60

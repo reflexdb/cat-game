@@ -17,7 +17,9 @@ def draw_text(text, font_obj, color, surface, x, y):
 
 def main():
     state = "START"
-    level = Level()
+    difficulties = list(DIFFICULTIES.keys())
+    diff_index = 1
+    level = None
     
     while True:
         clock.tick(FPS)
@@ -27,15 +29,30 @@ def main():
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
+                if state == "START":
+                    if event.key == pygame.K_UP:
+                        diff_index = (diff_index - 1) % len(difficulties)
+                    elif event.key == pygame.K_DOWN:
+                        diff_index = (diff_index + 1) % len(difficulties)
+                        
                 if state in ["START", "GAME_OVER", "LEVEL_COMPLETE"]:
                    if event.key == pygame.K_SPACE:
                        state = "PLAYING"
-                       level = Level() # Reset level
+                       selected_diff = difficulties[diff_index]
+                       level = Level(selected_diff) # Start level
         
         if state == "START":
             screen.fill(BLACK)
             draw_text("Cat Adventure", font, WHITE, screen, WIDTH // 2, HEIGHT // 3)
-            draw_text("Press SPACE to Start", pygame.font.Font(None, 36), WHITE, screen, WIDTH // 2, HEIGHT // 2)
+            
+            # Draw Difficulty selection
+            draw_text("Select Difficulty (UP/DOWN):", pygame.font.Font(None, 36), WHITE, screen, WIDTH // 2, HEIGHT // 2)
+            
+            for i, diff in enumerate(difficulties):
+                color = YELLOW if i == diff_index else WHITE
+                draw_text(diff, pygame.font.Font(None, 48), color, screen, WIDTH // 2, HEIGHT // 2 + 50 + (i * 40))
+                
+            draw_text("Press SPACE to Start", pygame.font.Font(None, 36), GREEN, screen, WIDTH // 2, HEIGHT - 50)
             pygame.display.flip()
 
         elif state == "PLAYING":

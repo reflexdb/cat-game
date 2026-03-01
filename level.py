@@ -4,7 +4,9 @@ from settings import *
 from sprites import Cat, Dog, Collectible, Puddle, Goal
 
 class Level:
-    def __init__(self):
+    def __init__(self, difficulty="MEDIUM"):
+        self.difficulty = difficulty
+        
         # Sprite groups
         self.all_sprites = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
@@ -32,17 +34,19 @@ class Level:
         self.all_sprites.add(self.goal)
         
         # Enemies
-        for _ in range(4):
+        config = DIFFICULTIES[self.difficulty]
+        enemy_speed = config["ENEMY_SPEED"]
+        for _ in range(config["DOG_COUNT"]):
             x = random.randint(150, WIDTH - 150)
             y = random.randint(50, HEIGHT - 50)
-            dx = random.choice([-ENEMY_SPEED, ENEMY_SPEED])
-            dy = random.choice([-ENEMY_SPEED, ENEMY_SPEED])
+            dx = random.choice([-enemy_speed, enemy_speed])
+            dy = random.choice([-enemy_speed, enemy_speed])
             dog = Dog(x, y, dx, dy)
             self.enemies.add(dog)
             self.all_sprites.add(dog)
             
         # Hazards (Puddles)
-        for _ in range(5):
+        for _ in range(config["PUDDLE_COUNT"]):
              x = random.randint(150, WIDTH - 150)
              y = random.randint(50, HEIGHT - 50)
              puddle = Puddle(x, y)
