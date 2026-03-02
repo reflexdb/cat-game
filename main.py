@@ -9,6 +9,25 @@ pygame.display.set_caption(TITLE)
 clock = pygame.time.Clock()
 font = pygame.font.Font(None, 74)
 
+# Load screen assets
+try:
+    title_img = pygame.image.load("assets/title.png").convert()
+    title_img = pygame.transform.scale(title_img, (WIDTH, HEIGHT))
+except FileNotFoundError:
+    title_img = None
+
+try:
+    win_img = pygame.image.load("assets/win.png").convert()
+    win_img = pygame.transform.scale(win_img, (WIDTH, HEIGHT))
+except FileNotFoundError:
+    win_img = None
+
+try:
+    lose_img = pygame.image.load("assets/lose.png").convert()
+    lose_img = pygame.transform.scale(lose_img, (WIDTH, HEIGHT))
+except FileNotFoundError:
+    lose_img = None
+
 def draw_text(text, font_obj, color, surface, x, y):
     textobj = font_obj.render(text, True, color)
     textrect = textobj.get_rect()
@@ -35,17 +54,29 @@ def main():
                     elif event.key == pygame.K_DOWN:
                         diff_index = (diff_index + 1) % len(difficulties)
                         
-                if state in ["START", "GAME_OVER", "LEVEL_COMPLETE"]:
+                if state in ["START", "LEVEL_COMPLETE"]:
                    if event.key == pygame.K_SPACE:
                        state = "PLAYING"
                        selected_diff = difficulties[diff_index]
                        level = Level(selected_diff) # Start level
+                elif state == "GAME_OVER":
+                   if event.key == pygame.K_SPACE:
+                       state = "START"
         
         if state == "START":
-            screen.fill(BLACK)
-            draw_text("Cat Adventure", font, WHITE, screen, WIDTH // 2, HEIGHT // 3)
+            if title_img:
+                screen.blit(title_img, (0, 0))
+            else:
+                screen.fill(BLACK)
+                draw_text("Cat Adventure", font, WHITE, screen, WIDTH // 2, HEIGHT // 3)
             
             # Draw Difficulty selection
+            # Adding a slight background to make text readable over the image
+            s = pygame.Surface((400, 200))
+            s.set_alpha(128)
+            s.fill(BLACK)
+            screen.blit(s, (WIDTH // 2 - 200, HEIGHT // 2 - 20))
+            
             draw_text("Select Difficulty (UP/DOWN):", pygame.font.Font(None, 36), WHITE, screen, WIDTH // 2, HEIGHT // 2)
             
             for i, diff in enumerate(difficulties):
@@ -60,16 +91,34 @@ def main():
             pygame.display.flip()
             
         elif state == "GAME_OVER":
-            screen.fill(BLACK)
-            draw_text("Game Over!", font, RED, screen, WIDTH // 2, HEIGHT // 3)
-            draw_text("Press SPACE to Restart", pygame.font.Font(None, 36), WHITE, screen, WIDTH // 2, HEIGHT // 2)
+            if lose_img:
+                screen.blit(lose_img, (0, 0))
+            else:
+                screen.fill(BLACK)
+                draw_text("Game Over!", font, RED, screen, WIDTH // 2, HEIGHT // 3)
+            
+            s = pygame.Surface((400, 50))
+            s.set_alpha(128)
+            s.fill(BLACK)
+            screen.blit(s, (WIDTH // 2 - 200, HEIGHT - 125))
+            
+            draw_text("Press SPACE for Title", pygame.font.Font(None, 36), WHITE, screen, WIDTH // 2, HEIGHT - 100)
             pygame.display.flip()
             
         elif state == "LEVEL_COMPLETE":
-            screen.fill(BLACK)
-            draw_text("Level Complete!", font, GREEN, screen, WIDTH // 2, HEIGHT // 3)
-            draw_text(f"Final Score: {level.score}", pygame.font.Font(None, 48), WHITE, screen, WIDTH // 2, HEIGHT // 2)
-            draw_text("Press SPACE to Play Again", pygame.font.Font(None, 36), WHITE, screen, WIDTH // 2, HEIGHT // 1.5)
+            if win_img:
+                screen.blit(win_img, (0, 0))
+            else:
+                screen.fill(BLACK)
+                draw_text("Level Complete!", font, GREEN, screen, WIDTH // 2, HEIGHT // 3)
+                
+            s = pygame.Surface((400, 100))
+            s.set_alpha(128)
+            s.fill(BLACK)
+            screen.blit(s, (WIDTH // 2 - 200, HEIGHT - 175))
+            
+            draw_text(f"Final Score: {level.score}", pygame.font.Font(None, 48), WHITE, screen, WIDTH // 2, HEIGHT - 150)
+            draw_text("Press SPACE to Play Again", pygame.font.Font(None, 36), WHITE, screen, WIDTH // 2, HEIGHT - 100)
             pygame.display.flip()
 
 if __name__ == "__main__":

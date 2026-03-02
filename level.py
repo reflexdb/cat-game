@@ -23,6 +23,13 @@ class Level:
         # Timer
         self.start_ticks = pygame.time.get_ticks() 
         self.time_left = LEVEL_TIME
+        
+        # Load Background
+        try:
+            self.bg_image = pygame.image.load("assets/bg_grass.png").convert()
+            self.bg_image = pygame.transform.scale(self.bg_image, (WIDTH, HEIGHT))
+        except FileNotFoundError:
+            self.bg_image = None
 
     def setup(self):
         # Player
@@ -85,7 +92,11 @@ class Level:
             return "LEVEL_COMPLETE"
 
         # Draw
-        surface.fill(GREEN)
+        if self.bg_image:
+            surface.blit(self.bg_image, (0, 0))
+        else:
+            surface.fill(GREEN)
+            
         self.all_sprites.draw(surface)
         
         # Draw HUD
